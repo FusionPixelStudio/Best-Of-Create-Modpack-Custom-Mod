@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "boc_custom:block/raw_sapphire_block"
+    }
+  }
+}
