@@ -3,10 +3,12 @@ package net.AsherRoland.BoCCustom;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlockRenderer;
 import net.AsherRoland.BoCCustom.indexing.SoPAllBlockEntityTypes;
 import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
 import net.AsherRoland.BoCCustom.indexing.SoPAllItems;
 import net.AsherRoland.BoCCustom.indexing.SoPCreativeModeTabs;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -25,15 +27,18 @@ public class BocCustom {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "boc_custom";
     // Directly reference a slf4j logger
-    public static final Logger LOGGER = LogUtils.getLogger();;
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public BocCustom(FMLJavaModLoadingContext context) {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        SoPAllBlocks.REGISTRATE.registerEventListeners(modBus);
+
         SoPAllBlocks.register();
         SoPAllBlockEntityTypes.register();
-
         SoPCreativeModeTabs.register(modBus);
+
+        LOGGER.info("BocCustom constructor called");
 
     }
 
@@ -59,7 +64,10 @@ public class BocCustom {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            BlockEntityRenderers.register(
+                    SoPAllBlockEntityTypes.RECYCLING_BLOCK.get(),
+                    RecyclingBlockRenderer::new
+            );
         }
     }
 }
