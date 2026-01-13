@@ -7,14 +7,22 @@ import com.simibubi.create.foundation.block.IBE;
 import net.AsherRoland.BoCCustom.indexing.SoPAllBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import org.slf4j.Logger;
+
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_AXIS;
 
 public class RecyclingBlock extends HorizontalKineticBlock implements IBE<RecyclingBlockEntity> {
 
@@ -25,26 +33,33 @@ public class RecyclingBlock extends HorizontalKineticBlock implements IBE<Recycl
 
     public RecyclingBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState()
-                .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH));
+        registerDefaultState(defaultBlockState());
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction prefferedSide = getPreferredHorizontalFacing(context);
+        if (prefferedSide != null)
+            return defaultBlockState().setValue(HORIZONTAL_FACING, prefferedSide);
+        return super.getStateForPlacement(context);
     }
 
     @Override
     public Axis getRotationAxis(BlockState state) {
-        return Axis.X;
+        return state.getValue(HORIZONTAL_FACING).getAxis();
     }
 
     @Override
-    public boolean hasShaftTowards(
-            LevelReader world,
-            BlockPos pos,
-            BlockState state,
-            Direction face
-    ) {
-        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING
-        );
-        return face == facing.getClockWise()
-                || face == facing.getCounterClockWise();
+    public BlockState rotate(BlockState state, Rotation rot) {
+        Axis axis = state.getValue(HORIZONTAL_AXIS);
+        return state.setValue(HORIZONTAL_AXIS,
+                rot.rotate(Direction.get(Direction.AxisDirection.POSITIVE, axis)).getAxis());
+    }
+
+    @Override
+    public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face ) {
+        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
+        return face == facing.getClockWise() || face == facing.getCounterClockWise();
     }
 
     @Override
@@ -63,12 +78,8 @@ public class RecyclingBlock extends HorizontalKineticBlock implements IBE<Recycl
         return SoPAllBlockEntityTypes.RECYCLING_BLOCK.get();
     }
 
-
-//    @Override
-//    protected void createBlockStateDefinition(
-//            StateDefinition.Builder<Block, BlockState> builder
-//    ) {
-//        super.createBlockStateDefinition(builder);
-////        builder.add(RECYCLING_FACING);
-//    }
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return SoPAllBlockEntityTypes.RECYCLING_BLOCK.create(pos, state);
+    }
 }
