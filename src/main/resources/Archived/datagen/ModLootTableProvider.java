@@ -1,6 +1,6 @@
-package net.AsherRoland.BoCCustom.datagen;
+package net.AsherRoland.BoCCustom.Archived.datagen;
 
-import net.AsherRoland.BoCCustom.datagen.loot.ModBlockLootTables;
+import net.AsherRoland.BoCCustom.Archived.datagen.loot.ModBlockLootTables;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;

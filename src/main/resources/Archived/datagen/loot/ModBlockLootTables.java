@@ -1,6 +1,6 @@
-package net.AsherRoland.BoCCustom.datagen.loot;
+package net.AsherRoland.BoCCustom.Archived.datagen.loot;
 
-import net.AsherRoland.BoCCustom.indexing.ModBlocks;
+//import net.AsherRoland.BoCCustom.indexing.ModBlocks;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;

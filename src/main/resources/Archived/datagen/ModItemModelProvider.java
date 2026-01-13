@@ -1,4 +1,4 @@
-package net.AsherRoland.BoCCustom.datagen;
+package net.AsherRoland.BoCCustom.Archived.datagen;
 
 import net.AsherRoland.BoCCustom.BocCustom;
 import net.minecraft.data.PackOutput;

@@ -1,9 +1,12 @@
 package net.AsherRoland.BoCCustom;
 
 import com.mojang.logging.LogUtils;
-import net.AsherRoland.BoCCustom.indexing.ModBlocks;
-import net.AsherRoland.BoCCustom.indexing.ModCreativeModeTabs;
-import net.AsherRoland.BoCCustom.indexing.ModItems;
+import com.simibubi.create.Create;
+import com.simibubi.create.foundation.data.CreateRegistrate;
+import net.AsherRoland.BoCCustom.indexing.SoPAllBlockEntityTypes;
+import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
+import net.AsherRoland.BoCCustom.indexing.SoPAllItems;
+import net.AsherRoland.BoCCustom.indexing.SoPCreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -22,20 +25,15 @@ public class BocCustom {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "boc_custom";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();;
 
     public BocCustom(FMLJavaModLoadingContext context) {
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModCreativeModeTabs.register(modEventBus);
+        SoPAllBlocks.register();
+        SoPAllBlockEntityTypes.register();
 
-        ModItems.register(modEventBus);
-        //ModBlocks.register(modEventBus);
-
-        modEventBus.addListener(this::commonSetup);
-
-        MinecraftForge.EVENT_BUS.register(this);
-        modEventBus.addListener(this::addCreative);
+        SoPCreativeModeTabs.register(modBus);
 
     }
 
