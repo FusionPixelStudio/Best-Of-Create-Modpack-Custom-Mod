@@ -8,6 +8,7 @@ import net.AsherRoland.BoCCustom.indexing.SoPAllBlockEntityTypes;
 import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
 import net.AsherRoland.BoCCustom.indexing.SoPAllItems;
 import net.AsherRoland.BoCCustom.indexing.SoPCreativeModeTabs;
+import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,12 +22,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(BocCustom.MODID)
 public class BocCustom {
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "boc_custom";
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public BocCustom(FMLJavaModLoadingContext context) {
@@ -36,30 +34,19 @@ public class BocCustom {
 
         SoPAllBlocks.register();
         SoPAllBlockEntityTypes.register();
+        AllPartialModels.init();
         SoPCreativeModeTabs.register(modBus);
 
         LOGGER.info("BocCustom constructor called");
 
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
-
-    }
-
-    // Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-    }
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
 
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent

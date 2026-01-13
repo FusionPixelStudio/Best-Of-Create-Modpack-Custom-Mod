@@ -1,6 +1,8 @@
 package net.AsherRoland.BoCCustom.indexing;
 
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -9,6 +11,7 @@ import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlock;
 import org.slf4j.Logger;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
+import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
 public class SoPAllBlocks {
 
@@ -25,6 +28,8 @@ public class SoPAllBlocks {
             REGISTRATE.block("recycling_block", RecyclingBlock::new)
                     .initialProperties(SharedProperties::stone)
                     .properties(p -> p.strength(3.5F))
+                    .properties(p -> p.noOcclusion())
+                    .blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
                     .item()
                     .onRegister(block -> LOGGER.info("Recycling block registered"))
                     .tab(SoPCreativeModeTabs.BEST_OF_CREATE.getKey())

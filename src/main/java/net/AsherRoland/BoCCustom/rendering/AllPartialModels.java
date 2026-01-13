@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class AllPartialModels {
 
-    public static final PartialModel RECYCLER_GRINDER = block("block/recycling_block_grinder");
+    public static final PartialModel RECYCLER_GRINDER = block("recycling_block_grinder");
 
     private static PartialModel block(String path) {
         return PartialModel.of(new ResourceLocation(BocCustom.MODID, "block/" + path));
