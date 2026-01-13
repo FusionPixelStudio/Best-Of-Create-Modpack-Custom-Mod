@@ -29,27 +29,6 @@ public class RecyclingBlockRenderer extends KineticBlockEntityRenderer {
         return shaft(getRotationAxisOf(be));
     }
 
-    protected void renderSafe(KineticBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-                              int light, int overlay) {
-        super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
-        if (VisualizationManager.supportsVisualization(be.getLevel())) return;
-        BlockState blockState = be.getBlockState();
-        BlockPos pos = be.getBlockPos();
-
-        VertexConsumer vb = buffer.getBuffer(RenderType.solid());
-
-        int packedLightmapCoords = LevelRenderer.getLightColor(be.getLevel(), pos);
-        SuperByteBuffer shaft =  CachedBuffers.partial(AllPartialModels.RECYCLER_GRINDER, blockState);
-        Direction.Axis axis = getRotationAxisOf(be);
-
-        shaft
-                .rotateCentered(axis == Direction.Axis.Z ? 0 : 90*(float)Math.PI/180f, Direction.UP)
-                .translate(0, 4f/16f, 0)
-                .rotateCentered(getAngleForBe(be, pos, axis), Direction.NORTH)
-                .light(packedLightmapCoords)
-                .renderInto(ms, vb);
-    }
-
     public RecyclingBlockRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }

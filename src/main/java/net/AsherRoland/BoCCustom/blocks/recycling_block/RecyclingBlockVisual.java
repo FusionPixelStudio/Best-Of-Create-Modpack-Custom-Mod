@@ -27,9 +27,9 @@ public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBloc
                 .instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.RECYCLER_GRINDER))
                 .createInstance();
 
-        grinder.setup(be, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getAxis())
-                .setRotationAxis(blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
+        grinder.setup(be)
                 .setPosition(getVisualPosition())
+                .rotateToFace(Direction.SOUTH, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
                 .setChanged();
 
     }
@@ -37,7 +37,7 @@ public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBloc
     @Override
     public void update(float v) {
         final Direction direction = blockState.getValue(RecyclingBlock.HORIZONTAL_FACING);
-        final Direction.Axis axis = direction.getAxis();
+        final Direction.Axis axis = direction.getClockWise().getAxis();
         grinder.setup(blockEntity, axis, blockEntity.getSpeed()).setChanged();
     }
 
