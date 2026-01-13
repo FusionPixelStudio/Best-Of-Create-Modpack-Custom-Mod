@@ -6,11 +6,15 @@ import com.simibubi.create.foundation.render.AllInstanceTypes;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.model.Models;
+import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
 import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+
+import static com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer.getAngleForBe;
 
 public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBlockEntity> {
 
@@ -24,6 +28,7 @@ public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBloc
                 .createInstance();
 
         grinder.setup(be, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getAxis())
+                .setRotationAxis(blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
                 .setPosition(getVisualPosition())
                 .setChanged();
 
