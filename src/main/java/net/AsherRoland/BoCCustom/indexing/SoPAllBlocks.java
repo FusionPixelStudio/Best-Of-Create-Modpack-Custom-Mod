@@ -9,9 +9,11 @@ import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.AsherRoland.BoCCustom.BocCustom;
 import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlock;
+import net.minecraft.tags.BlockTags;
 import org.slf4j.Logger;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
+import static com.simibubi.create.infrastructure.config.CStress.setImpact;
 
 public class SoPAllBlocks {
 
@@ -33,6 +35,8 @@ public class SoPAllBlocks {
                     .onRegister(block -> LOGGER.info("Recycling block registered"))
                     .tab(SoPCreativeModeTabs.BEST_OF_CREATE.getKey())
                     .transform(customItemModel())
+                    .tag(BlockTags.MINEABLE_WITH_AXE)
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .register();
 
 

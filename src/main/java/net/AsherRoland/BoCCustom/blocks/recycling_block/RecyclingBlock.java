@@ -28,6 +28,10 @@ public class RecyclingBlock extends HorizontalKineticBlock implements IBE<Recycl
         LOGGER.info("RecyclingBlock class loaded");
     }
 
+    public static long getCapacity(int tier) {
+        return (long) (Math.pow(10, tier) * 1000);
+    }
+
     public RecyclingBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState());

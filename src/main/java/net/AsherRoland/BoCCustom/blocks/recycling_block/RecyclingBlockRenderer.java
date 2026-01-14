@@ -18,7 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 
-public class RecyclingBlockRenderer extends KineticBlockEntityRenderer {
+public class RecyclingBlockRenderer extends KineticBlockEntityRenderer<RecyclingBlockEntity> {
 
     public static final Logger LOGGER = LogUtils.getLogger();
     static {
