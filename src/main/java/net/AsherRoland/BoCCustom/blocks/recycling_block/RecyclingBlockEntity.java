@@ -31,7 +31,7 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
 
 
     private static final int CAPACITY = 20_000;    // Max energy
-    private static final int MAX_INPUT = 1000;     // Max input per tick
+    private static final int MAX_INPUT = 500;     // Max input per tick
     private boolean active = false;
 
     @Override
@@ -39,15 +39,12 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         super.tick();
         if(level.isClientSide()) return;
 
-        int previous = energy.getEnergyStored();
+        sendData();
 
         int requiredEnergy = getEnergyConsumptionRate();
         if(!active) {
             if (isRotatingCorrectly() && isSpeedRequirementFulfilled()) {
-                if (energy.getEnergyStored() >= requiredEnergy) {
-                    active = true;
-                    sendData();
-                }
+                active = true;
             }
         }
 
@@ -57,12 +54,7 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
             processWithSpeedMultiplier(speedMultiplier);
 
             // Stop if not enough energy left
-            if((consumed < requiredEnergy) || !isRotatingCorrectly() || !isSpeedRequirementFulfilled()) active = false;
-            sendData();
-        }
-
-        if(previous != energy.getEnergyStored()) {
-            sendData();
+            if(!isRotatingCorrectly() || !isSpeedRequirementFulfilled()) active = false;
         }
     }
 
@@ -128,6 +120,12 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         return dir == getBlockState().getValue(HorizontalDirectionalBlock.FACING);
     }
 
+    public float calculateAddedStressCapacity() {
+        float capacity = 80/256f;
+        this.lastCapacityProvided = capacity;
+        return capacity;
+    }
+
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
 
         BocLang.translate("tooltip.recycler.header")
@@ -138,8 +136,10 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
                     .forGoggles(tooltip);
         }
 
-        energy.storedEnergyTooltip(tooltip);
-        RecyclingEnergyStorage.energyConsumptionTooltip(tooltip, energy.getEnergyStored() > 0? 128 : 0 );
+        if (energy.getEnergyStored() > 0) {
+            energy.storedEnergyTooltip(tooltip);
+            energy.energyConsumptionTooltip(tooltip, active ? getEnergyConsumptionRate() : 0);
+        }
 
         return true;
     }

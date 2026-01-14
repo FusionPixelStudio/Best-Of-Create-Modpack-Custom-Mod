@@ -9,13 +9,13 @@ import net.minecraftforge.energy.EnergyStorage;
 import java.util.List;
 
 public class RecyclingEnergyStorage extends EnergyStorage {
-    public RecyclingEnergyStorage(int capacity) {
-        super(capacity);
-    }
-
-    public RecyclingEnergyStorage(int capacity, int maxReceive) {
-        super(capacity, maxReceive, 0);
-    }
+//    public RecyclingEnergyStorage(int capacity) {
+//        super(capacity);
+//    }
+//
+//    public RecyclingEnergyStorage(int capacity, int maxReceive) {
+//        super(capacity, maxReceive, 0);
+//    }
 
     public RecyclingEnergyStorage(int capacity, int maxReceive, int maxExtract) {
         super(capacity, maxReceive, maxExtract, 0);
@@ -33,8 +33,8 @@ public class RecyclingEnergyStorage extends EnergyStorage {
 
     // Direct energy manipulation for internal processing
     public int consume(int amount) {
-        int used = Math.min(amount, getEnergyStored());
-        extractEnergy(used, false);
+        int used = Math.min(amount, energy);
+        energy -= used;
         return used;
     }
 
@@ -63,8 +63,8 @@ public class RecyclingEnergyStorage extends EnergyStorage {
 
     }
 
-    public static void energyConsumptionTooltip(List<Component> tooltip, int consumption){
-        BocLang.number(consumption)
+    public void energyConsumptionTooltip(List<Component> tooltip, int consumption){
+        BocLang.number(this.getEnergyStored() > 0 ? consumption : 0)
                 .add(BocLang.text(" FE/tick"))
                 .style(ChatFormatting.AQUA)
                 .space()
