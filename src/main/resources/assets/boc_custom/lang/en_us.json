@@ -1,4 +1,6 @@
 {
   "creativetab.best_of_create_tab": "Best Of Create",
-  "block.boc_custom.recycling_block": "Recycling Block"
+  "block.boc_custom.recycling_block": "Recycling Block",
+  "boc_custom.tooltip.recycler.header": "A Recycling Block",
+  "boc_custom.tooltip.recycler.wrong_direction": "Rotating Wrong Direction"
 }
