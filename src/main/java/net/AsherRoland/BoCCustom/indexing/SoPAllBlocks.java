@@ -2,11 +2,8 @@ package net.AsherRoland.BoCCustom.indexing;
 
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.foundation.data.AssetLookup;
-import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
-import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.AsherRoland.BoCCustom.BocCustom;
 import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlock;
@@ -14,7 +11,6 @@ import net.minecraft.tags.BlockTags;
 import org.slf4j.Logger;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
-import static com.simibubi.create.infrastructure.config.CStress.setImpact;
 
 public class SoPAllBlocks {
 
@@ -29,16 +25,15 @@ public class SoPAllBlocks {
 
     public static final BlockEntry<RecyclingBlock> RECYCLING_BLOCK =
             REGISTRATE.block("recycling_block", RecyclingBlock::new)
-                    .transform(CStress.setImpact(2.0))
                     .initialProperties(SharedProperties::stone)
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-//                    .properties(p -> p.noOcclusion())
+                    .properties(p -> p.noOcclusion())
                     .item()
-//                    .onRegister(block -> LOGGER.info("Recycling block registered"))
+                    .onRegister(block -> LOGGER.info("Recycling block registered"))
                     .tab(SoPCreativeModeTabs.BEST_OF_CREATE.getKey())
                     .transform(customItemModel())
-//                    .tag(BlockTags.MINEABLE_WITH_AXE)
-//                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .tag(BlockTags.MINEABLE_WITH_AXE)
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .register();
 
 

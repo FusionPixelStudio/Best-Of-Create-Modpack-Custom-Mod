@@ -120,16 +120,16 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         return dir == getBlockState().getValue(HorizontalDirectionalBlock.FACING);
     }
 
-    public float calculateAddedStressCapacity() {
-        float capacity = 80/256f;
-        this.lastCapacityProvided = capacity;
+    public float calculateStressApplied() {
+        float capacity = 128f;
+        this.lastStressApplied  = capacity;
         return capacity;
     }
 
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
 
-        BocLang.translate("tooltip.recycler.header")
-                .forGoggles(tooltip);
+//        BocLang.translate("tooltip.recycler.header")
+//                .forGoggles(tooltip);
         if (!isRotatingCorrectly()) {
             BocLang.translate("tooltip.recycler.wrong_direction")
                     .style(ChatFormatting.RED)

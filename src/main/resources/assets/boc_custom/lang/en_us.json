@@ -1,9 +1,13 @@
 {
   "creativetab.best_of_create_tab": "Best Of Create",
   "block.boc_custom.recycling_block": "Recycling Block",
-  "boc_custom.tooltip.recycler.header": "Recycler:",
   "boc_custom.tooltip.recycler.energy_stats": "Energy Status:",
   "boc_custom.tooltip.recycler.energy_stored": "Stored",
   "boc_custom.tooltip.recycler.energy_consumption": "Using",
-  "boc_custom.tooltip.recycler.wrong_direction": "Rotating Wrong Direction"
+  "boc_custom.tooltip.recycler.wrong_direction": "Rotating Wrong Direction",
+  "boc_custom.tooltip.boc_custom.speed": "Speed",
+  "boc_custom.tooltip.boc_custom.energy_per_tick": "%s ⚡/T",
+  "boc_custom.tooltip.boc_custom.per_rpm": "per %s RPM",
+  "boc_custom.tooltip.boc_custom.stores": "Stores: ",
+  "boc_custom.tooltip.boc_custom.energy": "%s ⚡"
 }
