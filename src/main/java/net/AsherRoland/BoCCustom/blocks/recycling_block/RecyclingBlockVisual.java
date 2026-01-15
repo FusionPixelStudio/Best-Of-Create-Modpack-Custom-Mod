@@ -26,7 +26,7 @@ public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBloc
 
         grinder.setup(be)
                 .setPosition(getVisualPosition())
-                .rotateToFace(Direction.NORTH, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
+                .rotateToFace(Direction.EAST, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getOpposite())
                 .setRotationAxis(blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
                 .setChanged();
 
