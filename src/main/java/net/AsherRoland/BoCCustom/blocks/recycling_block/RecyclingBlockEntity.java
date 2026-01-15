@@ -4,17 +4,27 @@ import com.mojang.logging.LogUtils;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.AsherRoland.BoCCustom.BocLang;
+import net.AsherRoland.BoCCustom.client;
+import net.AsherRoland.BoCCustom.network.ModNetworking;
+import net.AsherRoland.BoCCustom.network.TotalRecycledPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.network.PacketDistributor;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -25,6 +35,32 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
     static {
         LOGGER.info("RecyclingBlockEntity class loaded");
     }
+
+    private final ItemStackHandler inventory = new ItemStackHandler(2) {
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            // Slot 0 = input only
+            if (slot == 0) return true;
+
+            // Slot 1 = output only (no manual insertion)
+            return false;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            if (!(level instanceof ServerLevel)) return;
+            setChanged();
+        }
+    };
+
+    private final LazyOptional<IItemHandler> lazyItems =
+            LazyOptional.of(() -> inventory);
+
+
+    private int accumulatedItems = 0;
+    private int lockedItemsPerGold = -1;
+    private int cachedItemsPerGold = 0; // default for tooltip
 
     private final RecyclingEnergyStorage energy;
     private final LazyOptional<IEnergyStorage> lazyEnergy;
@@ -37,30 +73,115 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
     @Override
     public void tick() {
         super.tick();
-        if(level.isClientSide()) return;
+        if (level.isClientSide()) return;
+        if (!(level instanceof ServerLevel serverLevel)) return;
 
-        sendData();
-
-        int requiredEnergy = getEnergyConsumptionRate();
-        if(!active) {
-            if (isRotatingCorrectly() && isSpeedRequirementFulfilled()) {
-                active = true;
-            }
+        // Check rotation and speed first
+        if (!isRotatingCorrectly() || !isSpeedRequirementFulfilled()) {
+            active = false;
+            return;
         }
 
-        if(active) {
-            int consumed = energy.consume(requiredEnergy); // Drain FE
-            float speedMultiplier = 1f + ((float) consumed / requiredEnergy); // Scale speed
-            processWithSpeedMultiplier(speedMultiplier);
+        ItemStack input = inventory.getStackInSlot(0);
+        ItemStack output = inventory.getStackInSlot(1);
 
-            // Stop if not enough energy left
-            if(!isRotatingCorrectly() || !isSpeedRequirementFulfilled()) active = false;
+        // Only active if there are items in input and output slot has space
+        active = !input.isEmpty() && (output.isEmpty() || output.getCount() < 64);
+
+        if (!active) return;
+
+        int requiredEnergy = getEnergyConsumptionRate();
+        int consumed = energy.consume(requiredEnergy);
+
+        RecyclingBlockSavedData data = RecyclingBlockSavedData.get(serverLevel);
+        data.addRecycledItems(inventory.getStackInSlot(0).getCount());
+
+        // Send packet to all players tracking this chunk
+        ModNetworking.CHANNEL.send(
+                PacketDistributor.TRACKING_CHUNK.with(() -> serverLevel.getChunkAt(getBlockPos())),
+                new TotalRecycledPacket(data.getTotalItemsRecycled())
+        );
+
+        ensureLockedItemsPerGold(serverLevel);
+
+        if (!input.isEmpty() && (output.isEmpty() || output.getCount() < 64)) {
+            int toTake = Math.min(
+                    input.getCount(),
+                    lockedItemsPerGold - accumulatedItems
+            );
+
+            input.shrink(toTake);
+            accumulatedItems += toTake;
+
+            inventory.setStackInSlot(0, ItemStack.EMPTY);
+            setChanged();
+        }
+
+        processRecycling(consumed);
+    }
+
+    private void processRecycling(int consumedFE) {
+        if (!(level instanceof ServerLevel serverLevel)) return;
+
+        ItemStack output = inventory.getStackInSlot(1);
+
+        // Stop if output slot is full
+        if (!output.isEmpty() && output.getCount() >= 64) return;
+
+        // Get multipliers for gold efficiency
+        float goldMultiplier = getEnergyMultiplier(consumedFE);
+
+        int effectiveItemsPerGold =
+                Math.max(1, Math.round(lockedItemsPerGold / goldMultiplier));
+
+        cachedItemsPerGold = effectiveItemsPerGold;
+
+        // Process as much gold as possible
+        while (accumulatedItems >= effectiveItemsPerGold) {
+            accumulatedItems -= effectiveItemsPerGold;
+
+            // Add gold to output
+            if (output.isEmpty()) {
+                inventory.setStackInSlot(1, new ItemStack(Items.GOLD_INGOT, 1));
+                output = inventory.getStackInSlot(1);
+            } else {
+                output.grow(1);
+            }
+
+            lockedItemsPerGold = -1;
+
+            setChanged();
+
+            // Stop if output reaches 64
+            if (output.getCount() >= 64) break;
         }
     }
 
-    /** Multiply your internal processing by this value */
-    private void processWithSpeedMultiplier(float multiplier) {
-        // Insert your normal processing logic here, multiplying progress by multiplier
+    private void ensureLockedItemsPerGold(ServerLevel level) {
+        if (lockedItemsPerGold <= 0) {
+            lockedItemsPerGold = getItemsPerGold(level);
+        }
+    }
+
+    private int getItemsPerGold(ServerLevel level) {
+
+        long total = RecyclingBlockSavedData.get(level).getTotalItemsRecycled();
+
+        int baseCost = 128;
+        int maxCost = 64*50000;
+
+        double rawScaling = Math.pow(total / 128f, 0.6);
+        int stacks = (int) Math.floor(rawScaling);
+        int scaling = stacks * 64;
+
+        return Math.min(baseCost + scaling, maxCost);
+    }
+
+    private float getEnergyMultiplier(int consumedFE) {
+        if (consumedFE <= 0) return 1f;
+
+        // Every 100 FE = +1x speed
+        return 1f + (consumedFE / 100f);
     }
 
     /** How much FE to consume per tick, can scale with speed */
@@ -71,8 +192,43 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
 
     /** Expose FE input capability */
     @Override
-    public <T> LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
-        if(cap == ForgeCapabilities.ENERGY) return lazyEnergy.cast();
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+        if (cap == ForgeCapabilities.ENERGY) return lazyEnergy.cast();
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            if (side == Direction.DOWN) {
+                // Only expose slot 1 for bottom
+                IItemHandler outputOnly = new IItemHandler() {
+                    @Override
+                    public int getSlots() { return 2; }
+
+                    @Override
+                    public ItemStack getStackInSlot(int slot) {
+                        return slot == 1 ? inventory.getStackInSlot(1) : ItemStack.EMPTY;
+                    }
+
+                    @Override
+                    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+                        return stack; // don't allow inserting from bottom
+                    }
+
+                    @Override
+                    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                        if (slot == 1) return inventory.extractItem(slot, amount, simulate);
+                        return ItemStack.EMPTY;
+                    }
+
+                    @Override
+                    public int getSlotLimit(int slot) { return 64; }
+
+                    @Override
+                    public boolean isItemValid(int slot, ItemStack stack) {
+                        return false; // bottom doesn't accept items
+                    }
+                };
+                return LazyOptional.of(() -> outputOnly).cast();
+            }
+            return lazyItems.cast(); // other sides use full access
+        }
         return super.getCapability(cap, side);
     }
 
@@ -82,6 +238,11 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         super.read(compound, clientPacket);
         energy.read(compound, "main");
         active = compound.getBoolean("active");
+        accumulatedItems = compound.getInt("Accumulated");
+        cachedItemsPerGold = compound.getInt("Rate");
+        inventory.deserializeNBT(compound.getCompound("Inventory"));
+
+        lockedItemsPerGold = -1;
     }
 
     @Override
@@ -89,6 +250,9 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         super.write(compound, clientPacket);
         energy.write(compound, "main");
         compound.putBoolean("active", active);
+        compound.putInt("Accumulated", accumulatedItems);
+        compound.putInt("Rate", cachedItemsPerGold);
+        compound.put("Inventory", inventory.serializeNBT());
     }
 
     @Override
@@ -126,19 +290,49 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         return capacity;
     }
 
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 
-//        BocLang.translate("tooltip.recycler.header")
-//                .forGoggles(tooltip);
-        if (!isRotatingCorrectly()) {
-            BocLang.translate("tooltip.recycler.wrong_direction")
-                    .style(ChatFormatting.RED)
+        energy.energyConsumptionTooltip(tooltip, active ? getEnergyConsumptionRate() : 0);
+
+        if (active) {
+            BocLang.translate("tooltip.recycler.processing")
+                    .style(ChatFormatting.GOLD)
                     .forGoggles(tooltip);
+
+            // Show output slot
+            BocLang.translate("tooltip.recycler.output")
+                    .space()
+                    .add(BocLang.number(inventory.getStackInSlot(1).getCount()))
+                    .add(BocLang.text(" coins"))
+                    .style(ChatFormatting.YELLOW)
+                    .forGoggles(tooltip);
+
+            // Show progress toward next gold
+            BocLang.translate("tooltip.recycler.progress")
+                    .space()
+                    .add(BocLang.number(accumulatedItems))
+                    .add(BocLang.text(" / "))
+                    .add(BocLang.number(cachedItemsPerGold))
+                    .add(BocLang.text(" items toward coin"))
+                    .style(ChatFormatting.AQUA)
+                    .forGoggles(tooltip);
+
+
+                BocLang.translate("tooltip.recycler.total_recycled")
+                        .space()
+                        .add(BocLang.number(client.ClientRecyclingData.totalItemsRecycled))
+                        .add(BocLang.text(" total items recycled"))
+                        .style(ChatFormatting.GREEN)
+                        .forGoggles(tooltip);
+
         }
 
-        if (energy.getEnergyStored() > 0) {
-            energy.storedEnergyTooltip(tooltip);
-            energy.energyConsumptionTooltip(tooltip, active ? getEnergyConsumptionRate() : 0);
+        if (!isRotatingCorrectly()) {
+            BocLang.translate("tooltip.recycler.direction")
+                    .style(ChatFormatting.GOLD)
+                    .forGoggles(tooltip);
+            BocLang.translate("tooltip.recycler.wrong_direction")
+                    .forGoggles(tooltip);
         }
 
         return true;
@@ -146,7 +340,7 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
 
     public RecyclingBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
-        this.energy = new RecyclingEnergyStorage(CAPACITY, MAX_INPUT, 0);
+        this.energy = new RecyclingEnergyStorage(CAPACITY, MAX_INPUT, 0, this);
         this.lazyEnergy = LazyOptional.of(() -> energy);
 
     }

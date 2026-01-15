@@ -8,6 +8,7 @@ import net.AsherRoland.BoCCustom.indexing.SoPAllBlockEntityTypes;
 import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
 import net.AsherRoland.BoCCustom.indexing.SoPAllItems;
 import net.AsherRoland.BoCCustom.indexing.SoPCreativeModeTabs;
+import net.AsherRoland.BoCCustom.network.ModNetworking;
 import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -55,6 +56,7 @@ public class BocCustom {
                     SoPAllBlockEntityTypes.RECYCLING_BLOCK.get(),
                     RecyclingBlockRenderer::new
             );
+            ModNetworking.register();
         }
     }
 }

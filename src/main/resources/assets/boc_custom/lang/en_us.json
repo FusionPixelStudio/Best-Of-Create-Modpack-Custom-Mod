@@ -4,10 +4,15 @@
   "boc_custom.tooltip.recycler.energy_stats": "Energy Status:",
   "boc_custom.tooltip.recycler.energy_stored": "Stored",
   "boc_custom.tooltip.recycler.energy_consumption": "Using",
-  "boc_custom.tooltip.recycler.wrong_direction": "Rotating Wrong Direction",
+  "boc_custom.tooltip.recycler.direction": "Direction Requirement:",
+  "boc_custom.tooltip.recycler.wrong_direction": "The grinder is rotating the wrong direction",
   "boc_custom.tooltip.boc_custom.speed": "Speed",
   "boc_custom.tooltip.boc_custom.energy_per_tick": "%s ⚡/T",
   "boc_custom.tooltip.boc_custom.per_rpm": "per %s RPM",
-  "boc_custom.tooltip.boc_custom.stores": "Stores: ",
-  "boc_custom.tooltip.boc_custom.energy": "%s ⚡"
+  "boc_custom.tooltip.boc_custom.stores": "Stores:",
+  "boc_custom.tooltip.boc_custom.energy": "%s ⚡",
+  "boc_custom.tooltip.recycler.processing": "Processing Info: ",
+  "boc_custom.tooltip.recycler.output": "Output: ",
+  "boc_custom.tooltip.recycler.progress": "Progress: ",
+  "boc_custom.tooltip.recycler.total_recycled": "Total: "
 }

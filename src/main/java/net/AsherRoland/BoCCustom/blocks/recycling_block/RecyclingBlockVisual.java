@@ -6,15 +6,12 @@ import com.simibubi.create.foundation.render.AllInstanceTypes;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.model.Models;
-import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
 import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-import static com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer.getAngleForBe;
 
 public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBlockEntity> {
 
@@ -29,16 +26,16 @@ public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBloc
 
         grinder.setup(be)
                 .setPosition(getVisualPosition())
-                .rotateToFace(Direction.SOUTH, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
+                .rotateToFace(Direction.NORTH, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
+                .setRotationAxis(blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis())
                 .setChanged();
 
     }
 
     @Override
     public void update(float v) {
-        final Direction direction = blockState.getValue(RecyclingBlock.HORIZONTAL_FACING);
-        final Direction.Axis axis = direction.getClockWise().getAxis();
-        grinder.setup(blockEntity, axis, blockEntity.getSpeed()).setChanged();
+        grinder.setup(blockEntity, blockState.getValue(RecyclingBlock.HORIZONTAL_FACING).getClockWise().getAxis(), blockEntity.getSpeed())
+                .setChanged();
     }
 
     @Override
