@@ -3,21 +3,28 @@ package net.AsherRoland.BoCCustom.blocks.recycling_block;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.foundation.item.ItemHelper;
 import net.AsherRoland.BoCCustom.BocLang;
 import net.AsherRoland.BoCCustom.client;
 import net.AsherRoland.BoCCustom.network.ModNetworking;
 import net.AsherRoland.BoCCustom.network.TotalRecycledPacket;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -70,23 +77,43 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
     private static final int MAX_INPUT = 500;     // Max input per tick
     private boolean active = false;
 
+    public int timer = 120;
+
     @Override
     public void tick() {
         super.tick();
-        if (level.isClientSide()) return;
-        if (!(level instanceof ServerLevel serverLevel)) return;
-
-        // Check rotation and speed first
-        if (!isRotatingCorrectly() || !isSpeedRequirementFulfilled()) {
-            active = false;
-            return;
+        if (level.isClientSide) {
+            if (active && isRotatingCorrectly() && isSpeedRequirementFulfilled()) {
+                spawnParticles();
+            }
         }
+        if (!(level instanceof ServerLevel serverLevel)) return;
 
         ItemStack input = inventory.getStackInSlot(0);
         ItemStack output = inventory.getStackInSlot(1);
 
-        // Only active if there are items in input and output slot has space
-        active = !input.isEmpty() && (output.isEmpty() || output.getCount() < 64);
+        boolean hasInput = !input.isEmpty();
+        boolean outputHasSpace = output.isEmpty() || output.getCount() < 64;
+        boolean mechanicsValid = isRotatingCorrectly() && isSpeedRequirementFulfilled();
+
+        if (!mechanicsValid || !outputHasSpace) {
+            active = false;
+            return;
+        }
+
+        if (hasInput) {
+            active = true;
+            timer = Math.max(timer, 20);
+        }
+        else {
+            if (timer > 0) {
+                timer--;
+            } else {
+                active = false;
+                sendData();
+                return;
+            }
+        }
 
         if (!active) return;
 
@@ -262,6 +289,45 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         super.remove();
     }
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+//        invalidateCapabilities();
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        ItemHelper.dropContents(level, worldPosition, inventory);
+    }
+
+    public void spawnParticles() {
+        if (!(level instanceof net.minecraft.client.multiplayer.ClientLevel clientLevel))
+            return;
+
+        BlockParticleOption data =
+                new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GRAVEL.defaultBlockState());
+        Vec3 center = VecHelper.getCenterOf(worldPosition)
+                .add(0, 0.2f, 0);
+
+        float speed = Math.signum(getSpeed());
+        float angle = speed > 0 ? 25 : -25;
+
+        Vec3 motion = new Vec3(0, 0, 0.15f);
+        motion = VecHelper.rotate(motion, angle, Direction.Axis.Y);
+        motion = VecHelper.offsetRandomly(motion, level.random, 0.02f);
+
+        level.addParticle(
+                data,
+                center.x,
+                center.y,
+                center.z,
+                motion.x,
+                motion.y,
+                motion.z
+        );
+    }
+
     public Direction getRotationDirectionRelativeToFront() {
         float speed = getSpeed();
         if (speed == 0)
@@ -295,6 +361,7 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         energy.energyConsumptionTooltip(tooltip, active ? getEnergyConsumptionRate() : 0);
 
         if (active) {
+            BocLang.text(" ").forGoggles(tooltip);
             BocLang.translate("tooltip.recycler.processing")
                     .style(ChatFormatting.GOLD)
                     .forGoggles(tooltip);
@@ -303,7 +370,8 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
             BocLang.translate("tooltip.recycler.output")
                     .space()
                     .add(BocLang.number(inventory.getStackInSlot(1).getCount()))
-                    .add(BocLang.text(" coins"))
+                    .space()
+                    .add(BocLang.translate("tooltip.recycler.output_detail"))
                     .style(ChatFormatting.YELLOW)
                     .forGoggles(tooltip);
 
@@ -313,7 +381,8 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
                     .add(BocLang.number(accumulatedItems))
                     .add(BocLang.text(" / "))
                     .add(BocLang.number(cachedItemsPerGold))
-                    .add(BocLang.text(" items toward coin"))
+                    .space()
+                    .add(BocLang.translate("tooltip.recycler.progress_detail"))
                     .style(ChatFormatting.AQUA)
                     .forGoggles(tooltip);
 
@@ -321,13 +390,15 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
                 BocLang.translate("tooltip.recycler.total_recycled")
                         .space()
                         .add(BocLang.number(client.ClientRecyclingData.totalItemsRecycled))
-                        .add(BocLang.text(" total items recycled"))
+                        .space()
+                        .add(BocLang.translate("tooltip.recycler.recycled_detail"))
                         .style(ChatFormatting.GREEN)
                         .forGoggles(tooltip);
 
         }
 
         if (!isRotatingCorrectly()) {
+            BocLang.text(" ").forGoggles(tooltip);
             BocLang.translate("tooltip.recycler.direction")
                     .style(ChatFormatting.GOLD)
                     .forGoggles(tooltip);

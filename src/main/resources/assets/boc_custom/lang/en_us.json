@@ -13,6 +13,26 @@
   "boc_custom.tooltip.boc_custom.energy": "%s ⚡",
   "boc_custom.tooltip.recycler.processing": "Processing Info: ",
   "boc_custom.tooltip.recycler.output": "Output: ",
+  "boc_custom.tooltip.recycler.output_detail": "coins stored",
   "boc_custom.tooltip.recycler.progress": "Progress: ",
-  "boc_custom.tooltip.recycler.total_recycled": "Total: "
+  "boc_custom.tooltip.recycler.progress_detail": "to next coin",
+  "boc_custom.tooltip.recycler.total_recycled": "Total: ",
+  "boc_custom.tooltip.recycler.recycled_detail": "items recycled in world",
+
+  "boc_custom.ponder.tag.tconstruct": "Tinker's Construct",
+  "boc_custom.ponder.tag.tconstruct.description": "Learn all about making your own tools!",
+  "boc_custom.ponder.seared_melter.header": "Your First Smelter",
+  "boc_custom.ponder.seared_melter.text_1": "This is a basic smelter setup",
+  "boc_custom.ponder.seared_melter.text_2": "Use any fuel type",
+  "boc_custom.ponder.seared_melter.text_3": "Or use a fuel tank with lava",
+  "boc_custom.ponder.seared_melter.text_4": "Add ore to the melter",
+  "boc_custom.ponder.seared_melter.text_5": "And wait...",
+  "boc_custom.ponder.seared_melter.text_6": "Right Click faucet to release fluid",
+  "boc_custom.ponder.seared_melter.text_7": "Use hoppers, or modded methods to remove the item result",
+  "boc_custom.ponder.seared_melter.text_8": "And to fill the melter",
+  "boc_custom.ponder.seared_melter.text_9": "Use redstone to automatically drain the faucets",
+
+  "boc_custom.ponder.tag.boc": "Best of Create Modpack",
+  "boc_custom.ponder.tag.boc.description": "See all the custom stuff added for the modpack",
+  "boc_custom.ponder.recycling_block.header": "Recycle extra resources"
 }

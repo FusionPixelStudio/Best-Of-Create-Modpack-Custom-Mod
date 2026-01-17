@@ -30,6 +30,11 @@ public class RecyclingBlockSavedData extends SavedData {
         });
     }
 
+    public void resetTotalItemsRecycled() {
+        totalItemsRecycled = 0;
+        setDirty();
+    }
+
     public class TotalRecycledPacketHandler {
         public static void handle(TotalRecycledPacket message) {
             client.ClientRecyclingData.totalItemsRecycled = message.total;

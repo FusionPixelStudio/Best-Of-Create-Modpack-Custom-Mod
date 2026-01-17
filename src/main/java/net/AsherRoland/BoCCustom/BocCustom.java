@@ -1,25 +1,23 @@
 package net.AsherRoland.BoCCustom;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.Create;
-import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlockRenderer;
-import net.AsherRoland.BoCCustom.indexing.SoPAllBlockEntityTypes;
-import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
-import net.AsherRoland.BoCCustom.indexing.SoPAllItems;
-import net.AsherRoland.BoCCustom.indexing.SoPCreativeModeTabs;
+import net.AsherRoland.BoCCustom.commands.recyclingReset;
+import net.AsherRoland.BoCCustom.indexing.*;
 import net.AsherRoland.BoCCustom.network.ModNetworking;
+import net.AsherRoland.BoCCustom.ponder.BocPonderPlugin;
 import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -57,6 +55,7 @@ public class BocCustom {
                     RecyclingBlockRenderer::new
             );
             ModNetworking.register();
+            PonderIndex.addPlugin(new BocPonderPlugin());
         }
     }
 }
