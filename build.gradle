@@ -4,6 +4,11 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+
+    // Adds the Kotlin Gradle plugin
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    // OPTIONAL Kotlin Serialization plugin
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
 }
 
 version = mod_version
@@ -153,26 +158,25 @@ repositories {
         name 'DVS1 Maven FS'
         url 'https://dvs1.progwml6.com/files/maven'
     }
+
+//    maven { url = 'https://maven.modrinth'}
+
+    // Add KFF Maven repository
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+
+    maven {
+        name = "Valkyrien Skies Internal"
+        url = 'https://maven.valkyrienskies.org'
+    }
 }
 
 dependencies {
-    // Specify the version of Minecraft to use.
-    // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
-    // The "userdev" classifier will be requested and setup by ForgeGradle.
-    // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
-    // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
+
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
-    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
-
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
@@ -195,11 +199,22 @@ dependencies {
 
     implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
 
-    dependencies {
-        implementation fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_build}")
-        implementation fg.deobf("slimeknights.tconstruct:TConstruct:${minecraft_version}-${tinkers_build}")
-    }
+    implementation fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_build}")
+    implementation fg.deobf("slimeknights.tconstruct:TConstruct:${minecraft_version}-${tinkers_build}")
 
+    implementation fg.deobf("maven.modrinth:drive-by-wire:0.1.0")
+
+    implementation         ("org.valkyrienskies.core:api:1.1.0+f5f77df8f9")
+    implementation         ("org.valkyrienskies.core:impl:1.1.0+f5f77df8f9")
+    implementation         ("org.valkyrienskies.core:internal:1.1.0+f5f77df8f9")
+    implementation         ("org.valkyrienskies.core:util:1.1.0+f5f77df8f9")
+    implementation fg.deobf("org.valkyrienskies:valkyrienskies-120-forge:2.4.0+3aad65d7e7") {transitive = false }
+
+    implementation fg.deobf("maven.modrinth:create-tweaked-controllers:1.20.1-1.2.5")
+
+    implementation 'thedarkcolour:kotlinforforge:4.11.0'
+
+//    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
