@@ -2,8 +2,7 @@ package net.AsherRoland.BoCCustom.ponder;
 
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.AsherRoland.BoCCustom.BocCustom;
-import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
-import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.AsherRoland.BoCCustom.indexing.SoPRegistry;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +21,7 @@ public class BocPonderTags {
 
         HELPER.registerTag(BOC)
                 .addToIndex()
-                .item(SoPAllBlocks.RECYCLING_BLOCK, true, true)
+                .item(SoPRegistry.RECYCLING_BLOCK, true, true)
                 .register();
 
         HELPER.registerTag(TCONSTRUCT)

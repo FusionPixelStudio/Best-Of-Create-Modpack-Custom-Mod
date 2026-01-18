@@ -350,12 +350,6 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
         return dir == getBlockState().getValue(HorizontalDirectionalBlock.FACING);
     }
 
-    public float calculateStressApplied() {
-        float capacity = 128f;
-        this.lastStressApplied  = capacity;
-        return capacity;
-    }
-
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 
         energy.energyConsumptionTooltip(tooltip, active ? getEnergyConsumptionRate() : 0);
@@ -406,7 +400,15 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
                     .forGoggles(tooltip);
         }
 
+        BocLang.text(" ").forGoggles(tooltip);
+        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+
         return true;
+    }
+
+    @Override
+    public float calculateStressApplied() {
+        return 2f;
     }
 
     public RecyclingBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {

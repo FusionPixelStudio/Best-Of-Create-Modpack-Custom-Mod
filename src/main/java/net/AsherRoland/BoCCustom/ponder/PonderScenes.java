@@ -237,7 +237,7 @@ public class PonderScenes {
         scene.title("recycling_block", BocLang.translateDirect("ponder.recycling_block.header").getString());
         scene.showBasePlate();
 
-        var recycler = scene.world().showIndependentSection(util.select().fromTo(2, 2, 3, 2, 2, 3), Direction.DOWN);
+        var recycler = scene.world().showIndependentSection(util.select().position(2, 2, 3), Direction.DOWN);
         scene.world().moveSection(recycler, util.vector().of(0, -1, 0), 0);
 
         scene.markAsFinished();

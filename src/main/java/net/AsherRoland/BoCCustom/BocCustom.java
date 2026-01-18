@@ -1,18 +1,14 @@
 package net.AsherRoland.BoCCustom;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
 import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlockRenderer;
-import net.AsherRoland.BoCCustom.commands.recyclingReset;
 import net.AsherRoland.BoCCustom.indexing.*;
 import net.AsherRoland.BoCCustom.network.ModNetworking;
 import net.AsherRoland.BoCCustom.ponder.BocPonderPlugin;
 import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,9 +25,9 @@ public class BocCustom {
     public BocCustom(FMLJavaModLoadingContext context) {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        SoPAllBlocks.REGISTRATE.registerEventListeners(modBus);
+        SoPRegistry.REGISTRATE.registerEventListeners(modBus);
 
-        SoPAllBlocks.register();
+        SoPRegistry.register();
         SoPAllBlockEntityTypes.register();
         AllPartialModels.init();
         SoPCreativeModeTabs.register(modBus);

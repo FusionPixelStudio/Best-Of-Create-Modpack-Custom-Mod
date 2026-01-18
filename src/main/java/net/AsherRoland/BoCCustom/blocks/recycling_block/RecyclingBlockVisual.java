@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-
 public class RecyclingBlockVisual extends KineticBlockEntityVisual<RecyclingBlockEntity> {
 
     private final RotatingInstance grinder;

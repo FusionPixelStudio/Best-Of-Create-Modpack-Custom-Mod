@@ -1,6 +1,6 @@
 package net.AsherRoland.BoCCustom.ponder;
 
-import net.AsherRoland.BoCCustom.indexing.SoPAllBlocks;
+import net.AsherRoland.BoCCustom.indexing.SoPRegistry;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +20,6 @@ public class BocPonderScenes {
 
         HELPER.addStoryBoard(TinkerSmeltery.searedMelter.get(), "first_smelter_example", PonderScenes::searedMelter, TCONSTRUCT);
 
-        HELPER.addStoryBoard(SoPAllBlocks.RECYCLING_BLOCK.get(), "recycler_example", PonderScenes::recyclingBlock, BOC);
+        HELPER.addStoryBoard(SoPRegistry.RECYCLING_BLOCK.get(), "recycler_example", PonderScenes::recyclingBlock, BOC);
     }
 }

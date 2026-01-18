@@ -1,0 +1,113 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "minecraft:lead"
+  },
+  "loops": 2,
+  "results": [
+    {
+      "chance": 50.0,
+      "count": 3,
+      "item": "drivebywire:wire"
+    },
+    {
+      "chance": 50.0,
+      "item": "drivebywire:wire"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:cutting",
+      "ingredients": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ],
+      "results": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        },
+        {
+          "item": "minecraft:redstone"
+        }
+      ],
+      "results": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        },
+        {
+          "item": "minecraft:redstone"
+        }
+      ],
+      "results": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        },
+        {
+          "item": "minecraft:redstone"
+        }
+      ],
+      "results": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ],
+      "results": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        },
+        {
+          "item": "create:redstone_link"
+        }
+      ],
+      "results": [
+        {
+          "item": "boc_custom:incomplete_wire"
+        }
+      ]
+    }
+  ],
+  "transitionalItem": {
+    "item": "boc_custom:incomplete_wire"
+  }
+}

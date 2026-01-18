@@ -26,7 +26,7 @@ public class SoPCreativeModeTabs {
                     CreativeModeTab.builder()
                             .title(Component.literal("Best of Create"))
                             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
-                            .icon(SoPAllBlocks.RECYCLING_BLOCK::asStack)
+                            .icon(SoPRegistry.RECYCLING_BLOCK::asStack)
                             .displayItems(new RegistrateDisplayItemsGenerator())
                             .build()
             );
@@ -39,8 +39,8 @@ public class SoPCreativeModeTabs {
 
         private List<Item> collectBlocks(RegistryObject<CreativeModeTab> tab, Predicate<Item> exclusionPredicate) {
             List<Item> items = new ReferenceArrayList<>();
-            for (RegistryEntry<Block> entry : SoPAllBlocks.REGISTRATE.getAll(Registries.BLOCK)) {
-                if (!SoPAllBlocks.REGISTRATE.isInCreativeTab(entry, tab))
+            for (RegistryEntry<Block> entry : SoPRegistry.REGISTRATE.getAll(Registries.BLOCK)) {
+                if (!SoPRegistry.REGISTRATE.isInCreativeTab(entry, tab))
                     continue;
                 Item item = entry.get()
                         .asItem();
@@ -57,8 +57,8 @@ public class SoPCreativeModeTabs {
             List<Item> items = new ReferenceArrayList<>();
 
 
-            for (RegistryEntry<Item> entry : SoPAllBlocks.REGISTRATE.getAll(Registries.ITEM)) {
-                if (!SoPAllBlocks.REGISTRATE.isInCreativeTab(entry, tab))
+            for (RegistryEntry<Item> entry : SoPRegistry.REGISTRATE.getAll(Registries.ITEM)) {
+                if (!SoPRegistry.REGISTRATE.isInCreativeTab(entry, tab))
                     continue;
                 Item item = entry.get();
                 if (item instanceof BlockItem)

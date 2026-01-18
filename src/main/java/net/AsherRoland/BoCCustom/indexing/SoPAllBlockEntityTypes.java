@@ -8,12 +8,12 @@ import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlockVisual;
 
 public class SoPAllBlockEntityTypes {
 
-    private static final CreateRegistrate REGISTRATE = SoPAllBlocks.REGISTRATE;
+    private static final CreateRegistrate REGISTRATE = SoPRegistry.REGISTRATE;
 
     public static final BlockEntityEntry<RecyclingBlockEntity> RECYCLING_BLOCK = REGISTRATE
                     .blockEntity("recycling_block", RecyclingBlockEntity::new)
                     .visual(() -> RecyclingBlockVisual::new)
-                    .validBlocks(SoPAllBlocks.RECYCLING_BLOCK)
+                    .validBlocks(SoPRegistry.RECYCLING_BLOCK)
                     .renderer(() -> RecyclingBlockRenderer::new)
                     .register();
 

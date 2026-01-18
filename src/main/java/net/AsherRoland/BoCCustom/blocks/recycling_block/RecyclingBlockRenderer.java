@@ -7,6 +7,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -25,8 +26,48 @@ public class RecyclingBlockRenderer extends KineticBlockEntityRenderer<Recycling
         LOGGER.info("RecyclingBlockRenderer class loaded");
     }
 
-    protected BlockState getRenderedBlockState(RecyclingBlockEntity be) {
-        return shaft(getRotationAxisOf(be));
+    @Override
+    protected void renderSafe(
+            RecyclingBlockEntity be,
+            float partialTicks,
+            PoseStack ms,
+            MultiBufferSource buffer,
+            int light,
+            int overlay
+    ) {
+        if (VisualizationManager.supportsVisualization(be.getLevel()))
+            return;
+
+        BlockState state = be.getBlockState();
+        Direction facing = state.getValue(RecyclingBlock.HORIZONTAL_FACING);
+
+        float time = AnimationTickHolder.getRenderTime(be.getLevel());
+        float speed = be.getSpeed();
+
+        float angle = speed == 0
+                ? 0
+                : (time * speed * 3f / 10f) % 360f;
+
+        angle *= ((float) Math.PI / 180f);
+
+        SuperByteBuffer shaft =
+                CachedBuffers.partialFacing(
+                        AllPartialModels.RECYCLER_GRINDER,
+                        state,
+                        facing
+                );
+
+        shaft.rotateCentered(
+                (float) (Math.PI / 2),
+                Direction.UP
+        );
+
+        // Left/right axis relative to block
+        Direction.Axis shaftAxis = facing.getClockWise().getAxis();
+
+        kineticRotationTransform(shaft, be, shaftAxis, angle, light);
+
+        shaft.renderInto(ms, buffer.getBuffer(RenderType.solid()));
     }
 
     public RecyclingBlockRenderer(BlockEntityRendererProvider.Context context) {
