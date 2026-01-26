@@ -2,7 +2,7 @@ package net.AsherRoland.BoCCustom.network;
 
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraft.network.FriendlyByteBuf;
-import net.AsherRoland.BoCCustom.client.ClientRecyclingData;
+import net.AsherRoland.BoCCustom.clientEventData.ClientRecyclingData;
 
 import java.util.function.Supplier;
 

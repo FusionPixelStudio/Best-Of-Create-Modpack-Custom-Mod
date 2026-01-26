@@ -36,5 +36,8 @@
 
   "boc_custom.ponder.tag.boc": "Best of Create Modpack",
   "boc_custom.ponder.tag.boc.description": "See all the custom stuff added for the modpack",
-  "boc_custom.ponder.recycling_block.header": "Recycle extra resources"
+  "boc_custom.ponder.recycling_block.header": "Recycle extra resources",
+
+  "ftbquests.task.boc_custom.hex_casting": "Hex Casting Spell",
+  "boc_custom.task.spell": "Spell(s)"
 }

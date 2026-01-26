@@ -1,41 +1,68 @@
 package net.AsherRoland.BoCCustom.mixin;
 
-import at.petrak.hexcasting.common.msgs.MsgNewSpellPatternC2S;
+import at.petrak.hexcasting.api.casting.RenderedSpell;
+import at.petrak.hexcasting.api.casting.eval.CastingEnvironment;
+import at.petrak.hexcasting.api.casting.eval.sideeffects.OperatorSideEffect;
+import at.petrak.hexcasting.api.casting.eval.vm.CastingImage;
+import at.petrak.hexcasting.api.casting.eval.vm.CastingVM;
+import at.petrak.hexcasting.api.casting.iota.Iota;
 import dev.ftb.mods.ftbquests.quest.Chapter;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.AsherRoland.BoCCustom.task.CastSpellTask;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MsgNewSpellPatternC2S.class)
-public class BocHexCastingMixin {
+import java.lang.reflect.Field;
 
-    @Inject(method = "handle", at = @At("HEAD"))
-    private void boc$onHexCast(MinecraftServer server, ServerPlayer player, CallbackInfo ci) {
+@Mixin(OperatorSideEffect.AttemptSpell.class)
+public abstract class BocHexCastingMixin {
 
-        player.sendSystemMessage(
-                Component.literal("§d[BoC] Hex spell cast detected")
-        );
+    @Inject(method = "performEffect", at = @At("TAIL"))
+    private void boc$onHexCast(CastingVM harness, CallbackInfo ci) {
+        // The spell object is inside the AttemptSpell instance
+        RenderedSpell spell = ((OperatorSideEffect.AttemptSpell)(Object)this).spell;
 
-        if (!player.level().isClientSide) {
-            castSpell(
-                    (ServerPlayer) player,
-                    "hex_fireball"
-            );
-        }
+        // If you only want to track one spell, you can check class:
+        // if (!(spell instanceof BreakBlockSpell)) return;
 
+        if (!(harness.env.castingEntity instanceof ServerPlayer player)) return;
+        if (player.level().isClientSide) return;
+
+        // NOTE: RenderedSpell doesn't give you a ResourceLocation directly.
+        // So you must use something else like the class name.
+        ResourceLocation spellId = getSpellId(spell);
+
+        if (spellId == null) return;
+
+        castSpell(player, spellId);
     }
 
-    public static void castSpell(ServerPlayer player, String spellKey) {
-        TeamData teamData = TeamData.get(player);
+    private ResourceLocation getSpellId(RenderedSpell spell) {
+        // This is the key part:
+        // Hexcasting does NOT provide a spell ID, so you must use the class name.
 
+        String className = spell.getClass().getSimpleName();
+
+        // Convert to a ResourceLocation like:
+        // hexcasting:break_block_spell
+        // You can adjust this format however you want.
+
+        return new ResourceLocation("hexcasting", className.toLowerCase());
+    }
+
+    private void castSpell(ServerPlayer player, ResourceLocation spellId) {
+        TeamData teamData = TeamData.get(player);
         if (teamData == null) return;
 
         for (Chapter chapter : teamData.getFile().getAllChapters()) {
@@ -45,9 +72,9 @@ public class BocHexCastingMixin {
                 for (Task task : quest.getTasks()) {
                     if (!(task instanceof CastSpellTask castTask)) continue;
 
-                    if (!castTask.getSpellKey().equals(spellKey)) continue;
+                    if (!castTask.getSpellId().equals(spellId)) continue;
 
-                    castTask.progress(teamData, spellKey, 1, false);
+                    castTask.progress(teamData, spellId, 1, false);
                 }
             }
         }

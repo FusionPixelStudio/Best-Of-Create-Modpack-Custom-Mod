@@ -27,7 +27,7 @@ public class BocCustom {
     public static final String MODID = "boc_custom";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static TaskType HEX_CASTING = TaskTypes.register(ResourceLocation.fromNamespaceAndPath(BocCustom.MODID, "hex_casting"),
+    public static TaskType HEX_CASTING = TaskTypes.register(new ResourceLocation("boc_custom", "hex_casting"),
             CastSpellTask::new, () -> Icon.getIcon("minecraft:item/amethyst_shard"));
 
     public BocCustom(FMLJavaModLoadingContext context) {

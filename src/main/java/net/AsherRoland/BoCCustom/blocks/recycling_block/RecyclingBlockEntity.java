@@ -6,7 +6,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.item.ItemHelper;
 import net.AsherRoland.BoCCustom.BocLang;
-import net.AsherRoland.BoCCustom.client;
+import net.AsherRoland.BoCCustom.clientEventData;
 import net.AsherRoland.BoCCustom.network.ModNetworking;
 import net.AsherRoland.BoCCustom.network.TotalRecycledPacket;
 import net.createmod.catnip.math.VecHelper;
@@ -14,13 +14,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -384,7 +382,7 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
 
                 BocLang.translate("tooltip.recycler.total_recycled")
                         .space()
-                        .add(BocLang.number(client.ClientRecyclingData.totalItemsRecycled))
+                        .add(BocLang.number(clientEventData.ClientRecyclingData.totalItemsRecycled))
                         .space()
                         .add(BocLang.translate("tooltip.recycler.recycled_detail"))
                         .style(ChatFormatting.GREEN)

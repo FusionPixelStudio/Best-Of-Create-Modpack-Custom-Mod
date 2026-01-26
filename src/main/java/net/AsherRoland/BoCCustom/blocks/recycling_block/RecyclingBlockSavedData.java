@@ -1,6 +1,6 @@
 package net.AsherRoland.BoCCustom.blocks.recycling_block;
 
-import net.AsherRoland.BoCCustom.client;
+import net.AsherRoland.BoCCustom.clientEventData;
 import net.AsherRoland.BoCCustom.network.TotalRecycledPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -37,7 +37,7 @@ public class RecyclingBlockSavedData extends SavedData {
 
     public class TotalRecycledPacketHandler {
         public static void handle(TotalRecycledPacket message) {
-            client.ClientRecyclingData.totalItemsRecycled = message.total;
+            clientEventData.ClientRecyclingData.totalItemsRecycled = message.total;
         }
     }
 
