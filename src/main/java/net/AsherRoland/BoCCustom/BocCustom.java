@@ -1,13 +1,18 @@
 package net.AsherRoland.BoCCustom;
 
 import com.mojang.logging.LogUtils;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftbquests.quest.task.TaskType;
+import dev.ftb.mods.ftbquests.quest.task.TaskTypes;
 import net.AsherRoland.BoCCustom.blocks.recycling_block.RecyclingBlockRenderer;
 import net.AsherRoland.BoCCustom.indexing.*;
 import net.AsherRoland.BoCCustom.network.ModNetworking;
 import net.AsherRoland.BoCCustom.ponder.BocPonderPlugin;
 import net.AsherRoland.BoCCustom.rendering.AllPartialModels;
+import net.AsherRoland.BoCCustom.task.CastSpellTask;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,6 +26,9 @@ import org.slf4j.Logger;
 public class BocCustom {
     public static final String MODID = "boc_custom";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static TaskType HEX_CASTING = TaskTypes.register(ResourceLocation.fromNamespaceAndPath(BocCustom.MODID, "hex_casting"),
+            CastSpellTask::new, () -> Icon.getIcon("minecraft:item/amethyst_shard"));
 
     public BocCustom(FMLJavaModLoadingContext context) {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();

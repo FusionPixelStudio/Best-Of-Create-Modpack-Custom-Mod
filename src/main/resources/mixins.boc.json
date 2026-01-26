@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "net.AsherRoland.BoCCustom.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "refmap": "boc_custom.refmap.json",
+  "mixins": [
+    "BocHexCastingMixin"
+  ]
+}

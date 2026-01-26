@@ -1,5 +1,6 @@
 package net.AsherRoland.BoCCustom.blocks.recycling_block;
 
+import com.github.talrey.createdeco.ItemRegistry;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -169,7 +170,7 @@ public class RecyclingBlockEntity extends KineticBlockEntity implements IHaveGog
 
             // Add gold to output
             if (output.isEmpty()) {
-                inventory.setStackInSlot(1, new ItemStack(Items.GOLD_INGOT, 1));
+                inventory.setStackInSlot(1, new ItemStack(ItemRegistry.COINS.get("Gold"), 1));
                 output = inventory.getStackInSlot(1);
             } else {
                 output.grow(1);

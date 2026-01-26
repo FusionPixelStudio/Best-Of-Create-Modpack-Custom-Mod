@@ -1,0 +1,7 @@
+[
+  {
+    "block": "boc_custom:recycling_block",
+    "mass": 100,
+    "friction": 0.75
+  }
+]
