@@ -38,6 +38,22 @@
   "boc_custom.ponder.tag.boc.description": "See all the custom stuff added for the modpack",
   "boc_custom.ponder.recycling_block.header": "Recycle extra resources",
 
+  "boc_custom.ponder.tag.valk_sails": "Valkyrien Sails",
+  "boc_custom.ponder.tag.first_ship.description": "Learn how to make a boat with Valkyrien Sails",
+  "boc_custom.ponder.first_ship.header": "The First Ship",
+  "boc_custom.ponder.first_ship.text_1": "This is an example ship for Valkyrien Sails",
+  "boc_custom.ponder.first_ship.text_2": "We start with Buoy Blocks and Ballast Blocks",
+  "boc_custom.ponder.first_ship.text_3": "Ballast Blocks are used to offset the weight of the mast and sails",
+  "boc_custom.ponder.first_ship.text_4": "We need plenty of Buoys to support the wood, mast, sails, and ballast blocks",
+  "boc_custom.ponder.first_ship.text_5": "Add a Helm and Helm Wheel - This will not provide forward motion like Eureka Helms",
+  "boc_custom.ponder.first_ship.text_6": "Add a nice tall mast to support your sails",
+  "boc_custom.ponder.first_ship.text_7": "Add your sail blocks, and optionally add ropes to connect them to the ship",
+  "boc_custom.ponder.first_ship.text_8": "Sails use wind to push you forward",
+  "boc_custom.ponder.first_ship.text_9": "And use the helm to change the angle of motion",
+  "boc_custom.ponder.first_ship.text_10": "Imagine there's a rutter in the back of the boat that you are turning",
+  "boc_custom.ponder.first_ship.text_11": "Right click the ropes or sails to disable and hide them",
+  "boc_custom.ponder.first_ship.text_12": "There's no way to reverse in the mod yet, so don't get stuck",
+
   "ftbquests.task.boc_custom.hex_casting": "Hex Casting Spell",
   "boc_custom.task.spell": "Spell(s)"
 }

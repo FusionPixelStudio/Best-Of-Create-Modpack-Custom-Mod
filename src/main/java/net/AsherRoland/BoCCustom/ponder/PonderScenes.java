@@ -242,4 +242,129 @@ public class PonderScenes {
 
         scene.markAsFinished();
     }
+
+    public static void firstShip(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("first_ship", BocLang.translateDirect("ponder.first_ship.header").getString());
+        scene.configureBasePlate(0, 0, 19);
+        scene.scaleSceneView(0.35F);
+        scene.showBasePlate();
+        scene.world().showSection(util.select().fromTo(0, 1, 0, 19, 13, 19), Direction.DOWN);
+        scene.idle(20);
+        scene.overlay().showText(40)
+                .text("This is an example ship for Valkyrien Sails")
+                .pointAt(util.vector().blockSurface(util.grid().at(9, 5, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(60);
+        scene.world().hideSection(util.select().fromTo(0, 1, 0, 19, 13, 19), Direction.UP);
+        scene.idle(20);
+        scene.world().showSection(util.select().fromTo(5, 1, 9, 13, 1, 9), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(5, 2, 9, 13, 2, 9), Direction.DOWN);
+        scene.idle(20);
+        scene.overlay().showText(60)
+                .text("We start with Buoy Blocks and Ballast Blocks")
+                .pointAt(util.vector().blockSurface(util.grid().at(9, 2, 9), Direction.NORTH))
+                .placeNearTarget();
+        scene.idle(80);
+        scene.overlay().showText(80)
+                .text("Ballast Blocks are used to offset the weight of the mast and sails")
+                .pointAt(util.vector().blockSurface(util.grid().at(9, 2, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(100);
+        scene.world().showSection(util.select().fromTo(4, 3, 8, 14, 3, 10), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().fromTo(3, 4, 7, 15, 4, 11), Direction.DOWN);
+        scene.idle(20);
+        scene.overlay().showText(80)
+                .text("We need plenty of Buoys to support the wood, mast, sails, and ballast blocks")
+                .pointAt(util.vector().blockSurface(util.grid().at(9, 2, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(100);
+        scene.world().showSection(util.select().fromTo(2, 5, 6, 16, 6, 12), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(4, 2, 8, 14, 2, 10), Direction.UP);
+        scene.world().showSection(util.select().fromTo(3, 3, 7, 15, 3, 11), Direction.UP);
+        scene.world().showSection(util.select().fromTo(2, 4, 6, 16, 4, 12), Direction.UP);
+        scene.idle(20);
+        scene.overlay().showText(100)
+                .text("Add a Helm and Helm Wheel - This will not provide forward motion like Eureka Helms")
+                .pointAt(util.vector().blockSurface(util.grid().at(12, 5, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(120);
+        scene.world().showSection(util.select().position(9, 7, 9), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().position(9, 8, 9), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().position(9, 9, 9), Direction.DOWN);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(9, 10, 9), Direction.DOWN);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(9, 11, 9), Direction.DOWN);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(9, 12, 9), Direction.DOWN);
+        scene.idle(2);
+        scene.world().showSection(util.select().position(9, 13, 9), Direction.DOWN);
+        scene.idle(20);
+        scene.overlay().showText(80)
+                .text("Add a nice tall mast to support your sails")
+                .pointAt(util.vector().blockSurface(util.grid().at(9, 8, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(100);
+        scene.world().showSection(util.select().fromTo(8, 12, 8, 8, 12, 10), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().fromTo(7, 11, 7, 6, 11, 11), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().fromTo(7, 10, 7, 6, 10, 11), Direction.DOWN);
+        scene.idle(5);
+        scene.world().showSection(util.select().fromTo(6, 9, 7, 5, 9, 11), Direction.DOWN);
+        scene.idle(5);
+        scene.world().showSection(util.select().fromTo(6, 8, 7, 5, 8, 11), Direction.DOWN);
+        scene.idle(2);
+        scene.world().showSection(util.select().fromTo(6, 7, 7, 6, 7, 11), Direction.DOWN);
+        scene.idle(20);
+        scene.overlay().showText(80)
+                .text("Add your sail blocks, and optionally add ropes to connect them to the ship")
+                .pointAt(util.vector().blockSurface(util.grid().at(6, 6, 7), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(100);
+        scene.overlay().showText(80)
+                .text("Sails use wind to push you forward")
+                .pointAt(util.vector().blockSurface(util.grid().at(6, 10, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(100);
+        scene.overlay().showText(80)
+                .text("And use the helm to change the angle of motion")
+                .pointAt(util.vector().blockSurface(util.grid().at(12, 6, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(100);
+        scene.overlay().showText(80)
+                .text("Imagine there's a rutter in the back of the boat that you are turning")
+                .pointAt(util.vector().blockSurface(util.grid().at(16, 5, 9), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(100);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(6, 6, 7), Direction.NORTH), Pointing.UP, 40)
+                .rightClick();
+        scene.overlay().showText(80)
+                .text("Right click the ropes or sails to disable and hide them")
+                .pointAt(util.vector().blockSurface(util.grid().at(6, 6, 7), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(80);
+        scene.world().hideSection(util.select().fromTo(5, 7, 7, 8, 12, 11), Direction.UP);
+        scene.idle(20);
+        scene.overlay().showText(80)
+                .text("There's no way to reverse in the mod yet, so don't get stuck")
+                .pointAt(util.vector().blockSurface(util.grid().at(9, 8, 7), Direction.NORTH))
+                .attachKeyFrame()
+                .placeNearTarget();
+        scene.idle(80);
+    }
 }

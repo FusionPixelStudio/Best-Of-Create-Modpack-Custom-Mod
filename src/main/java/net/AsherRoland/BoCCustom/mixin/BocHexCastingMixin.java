@@ -1,11 +1,17 @@
 package net.AsherRoland.BoCCustom.mixin;
 
+import at.petrak.hexcasting.api.casting.ActionRegistryEntry;
+import at.petrak.hexcasting.api.casting.PatternShapeMatch;
 import at.petrak.hexcasting.api.casting.RenderedSpell;
+import at.petrak.hexcasting.api.casting.eval.CastResult;
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironment;
 import at.petrak.hexcasting.api.casting.eval.sideeffects.OperatorSideEffect;
 import at.petrak.hexcasting.api.casting.eval.vm.CastingImage;
 import at.petrak.hexcasting.api.casting.eval.vm.CastingVM;
+import at.petrak.hexcasting.api.casting.eval.vm.SpellContinuation;
 import at.petrak.hexcasting.api.casting.iota.Iota;
+import at.petrak.hexcasting.api.casting.iota.PatternIota;
+import at.petrak.hexcasting.common.casting.PatternRegistryManifest;
 import dev.ftb.mods.ftbquests.quest.Chapter;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
@@ -13,6 +19,8 @@ import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.AsherRoland.BoCCustom.task.CastSpellTask;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
@@ -22,43 +30,50 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.lang.reflect.Field;
 
-@Mixin(OperatorSideEffect.AttemptSpell.class)
+@Mixin(PatternIota.class)
 public abstract class BocHexCastingMixin {
 
-    @Inject(method = "performEffect", at = @At("TAIL"))
-    private void boc$onHexCast(CastingVM harness, CallbackInfo ci) {
-        // The spell object is inside the AttemptSpell instance
-        RenderedSpell spell = ((OperatorSideEffect.AttemptSpell)(Object)this).spell;
+    @Inject(
+            method = "execute",
+            at = @At(
+                    value = "RETURN",
+                    ordinal = 0 // ONLY the successful CastResult
+            )
+    )
+    private void boc$afterSuccessfulCast(
+            CastingVM vm,
+            ServerLevel world,
+            SpellContinuation continuation,
+            CallbackInfoReturnable<CastResult> cir
+    ) {
+        if (world.isClientSide) return;
 
-        // If you only want to track one spell, you can check class:
-        // if (!(spell instanceof BreakBlockSpell)) return;
+        LivingEntity caster = vm.getEnv().getCastingEntity();
+        if (!(caster instanceof ServerPlayer player)) return;
 
-        if (!(harness.env.castingEntity instanceof ServerPlayer player)) return;
-        if (player.level().isClientSide) return;
+        // Re-resolve the pattern to get the Action key
+        PatternShapeMatch lookup = PatternRegistryManifest.matchPattern(
+                ((PatternIota)(Object)this).getPattern(),
+                vm.getEnv(),
+                false
+        );
 
-        // NOTE: RenderedSpell doesn't give you a ResourceLocation directly.
-        // So you must use something else like the class name.
-        ResourceLocation spellId = getSpellId(spell);
+        ResourceKey<ActionRegistryEntry> key = null;
 
-        if (spellId == null) return;
+        if (lookup instanceof PatternShapeMatch.Normal normal) {
+            key = normal.key;
+        } else if (lookup instanceof PatternShapeMatch.PerWorld perWorld) {
+            key = perWorld.key;
+        }
 
+        if (key == null) return;
+
+        ResourceLocation spellId = key.location();
         castSpell(player, spellId);
-    }
-
-    private ResourceLocation getSpellId(RenderedSpell spell) {
-        // This is the key part:
-        // Hexcasting does NOT provide a spell ID, so you must use the class name.
-
-        String className = spell.getClass().getSimpleName();
-
-        // Convert to a ResourceLocation like:
-        // hexcasting:break_block_spell
-        // You can adjust this format however you want.
-
-        return new ResourceLocation("hexcasting", className.toLowerCase());
     }
 
     private void castSpell(ServerPlayer player, ResourceLocation spellId) {

@@ -1,5 +1,6 @@
 package net.AsherRoland.BoCCustom.ponder;
 
+import com.quintonc.vs_sails.registration.SailsBlocks;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.AsherRoland.BoCCustom.BocCustom;
 import net.AsherRoland.BoCCustom.indexing.SoPRegistry;
@@ -13,6 +14,7 @@ public class BocPonderTags {
 
     public static final ResourceLocation TCONSTRUCT = new ResourceLocation(BocCustom.MODID, "tconstruct");
     public static final ResourceLocation BOC = new ResourceLocation(BocCustom.MODID, "boc");
+    public static final ResourceLocation VALKSAILS = new ResourceLocation(BocCustom.MODID, "valk_sails");
 
     public BocPonderTags() {}
 
@@ -29,6 +31,11 @@ public class BocPonderTags {
                 .item(TinkerSmeltery.searedMelter.get(), true, true)
                 .register();
 
+        HELPER.registerTag(VALKSAILS)
+                .addToIndex()
+                .item(SailsBlocks.OAK_HELM.get(), true, false)
+                .register();
+
 
         PonderTagRegistrationHelper<ItemLike> HELPER2 =
                 helper.withKeyFunction(item -> BuiltInRegistries.ITEM.getKey(item.asItem()));
@@ -40,5 +47,13 @@ public class BocPonderTags {
                 .add(TinkerSmeltery.searedTable)
                 .add(TinkerSmeltery.searedFaucet)
                 .add(TinkerSmeltery.searedBricks);
+
+        HELPER2.addToTag(VALKSAILS)
+                .add(SailsBlocks.ACACIA_HELM.get())
+                .add(SailsBlocks.BIRCH_HELM.get())
+                .add(SailsBlocks.SPRUCE_HELM.get())
+                .add(SailsBlocks.JUNGLE_HELM.get())
+                .add(SailsBlocks.DARK_OAK_HELM.get())
+                .add(SailsBlocks.REDSTONE_HELM_BLOCK.get());
     }
 }
