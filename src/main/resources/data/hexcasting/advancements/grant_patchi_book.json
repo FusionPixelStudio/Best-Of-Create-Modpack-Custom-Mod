@@ -1,0 +1,18 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "loot": [
+      "hexcasting:grant_patchi_book"
+    ]
+  },
+  "conditions": [
+    {
+      "type": "tconstruct:config",
+      "prop": "spawn_with_book"
+    }
+  ]
+}

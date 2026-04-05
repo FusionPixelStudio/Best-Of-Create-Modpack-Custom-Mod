@@ -366,5 +366,6 @@ public class PonderScenes {
                 .attachKeyFrame()
                 .placeNearTarget();
         scene.idle(80);
+        scene.markAsFinished();
     }
 }
